@@ -1,22 +1,28 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchPokemonByName, fetchPokemons } from 'services/pokemon-api';
-import { pokemonsSlice } from './pokemon-slice';
 
-export const fetchPokemonsThunk = () => async dispatch => {
-  try {
-    const { results } = await fetchPokemons();
-    dispatch(pokemonsSlice.actions.setPokemonsAction(results));
-  } catch (error) {
-    console.log(error.message);
+export const fetchPokemonsThunk = createAsyncThunk(
+  'pokemons/fetchAllPokemons',
+  async (_, thunkAPI) => {
+    try {
+      const { results } = await fetchPokemons();
+      return results;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-};
+);
 
-export const fetchPokemonThunk = name => async dispatch => {
-  try {
-    const response = await fetchPokemonByName(name);
-    dispatch(pokemonsSlice.actions.setPokemonAction(response));
-  } catch (error) {
-    console.log(error.message);
+export const fetchPokemonThunk = createAsyncThunk(
+  'pokemons/fetchOnePokemon',
+  async (name, thunkAPI) => {
+    try {
+      const response = await fetchPokemonByName(name);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-};
+);
 
-// CreateAsyncThunk
+
